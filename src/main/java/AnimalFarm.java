@@ -1,7 +1,9 @@
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Класс AnimalFarm (ферма).
@@ -12,8 +14,8 @@ import java.util.List;
 public class AnimalFarm {
     private List<String> farmAnimals;
 
-    public AnimalFarm() {
-        this.farmAnimals = new ArrayList<>();
+    public AnimalFarm(List<String> animals) {
+        this.farmAnimals = animals;
     }
 
     /**
@@ -27,13 +29,12 @@ public class AnimalFarm {
     public HashMap<Animal, Long> countedAnimals() {
         HashMap<Animal, Long> animals = new HashMap<>();
 
+        // обработка некорректных строк
         for(String animal : farmAnimals) {
-            try {
-                // проверяет является ли первое слово валидным типом перечисления
-                Animal.valueOf(animal.substring(0, animal.indexOf(" ")));
-            } catch(IllegalArgumentException e) {
-                System.out.printf("Please correct string [%s]. Incorrect input data.\n", animal);
-                System.exit(1);
+            // строка не полная и не является валидным типом ИЛИ полная и тип не валиден ИЛИ пустая
+            if(!isFullString(animal) && !isValidType(animal) ||
+                    isFullString(animal) && !isValidType(animal.split(" ")[0]) || animal.isBlank()) {
+                System.out.printf("Please correct string [%s]. Incorrect input type.\n", animal);
             }
         }
 
@@ -56,13 +57,16 @@ public class AnimalFarm {
     public HashSet<String> uniqueNames() {
         HashSet<String> names = new HashSet<>();
 
+        // обработка некорректных строк
         for(String animal : farmAnimals) {
-            if(animal.substring(animal.indexOf(" ")+1).equals("N")) {
-                System.out.printf("Please correct string [%s]. Incorrect input data.\n", animal);
-                System.exit(1);
+            // строка не полная и тип валиден или пустая, пропускаем
+            if(!isFullString(animal) && isValidType(animal) || animal.isBlank()) {
+                System.out.printf("Please correct string [%s]. Incorrect input name.\n", animal);
+                continue;
             }
 
-            names.add(animal.substring(animal.indexOf(" ")+1));
+            // если строка не пустая добавляем имя
+            if(!animal.isBlank()) names.add(animal.substring(animal.indexOf(" ")+1));
         }
 
         return names;
@@ -84,6 +88,29 @@ public class AnimalFarm {
 
     public void addAnimal(String name) {
         farmAnimals.add(String.join(" ", Animal.NOT_DEFINED.getType(), name));
+    }
+
+    public boolean isFullString(String elem) {
+        Pattern p = Pattern.compile("[A-Z]+\\s[А-Яа-яA-Za-z]+");
+        Matcher matcher = p.matcher(elem);
+        return matcher.find();
+    }
+
+    public boolean isValidType(String elem) {
+        Pattern pType = Pattern.compile("[A-Z]+");
+        Matcher mType = pType.matcher(elem);
+
+        // если все символы заглавные, латинские
+        if(mType.find()) {
+            try {
+                Animal.valueOf(elem.trim()); // валидный ли тип
+                return true;
+            } catch(IllegalArgumentException e) {
+                return false;
+            }
+        }
+
+        return false; // слово не является валидным типом
     }
 
     @Override

@@ -1,19 +1,41 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class Main {
     public static void main(String[] args) {
-        AnimalFarm farm = new AnimalFarm();
+        List<String> correctAnimals = new ArrayList<>();
 
-        farm.addAnimal(Animal.CAT, "Барсик");
-        farm.addAnimal(Animal.CAT, "Мурзик");
-        farm.addAnimal(Animal.CAT, "Мурзик");
-        farm.addAnimal(Animal.CAT, "Мурзик");
-        farm.addAnimal(Animal.CAT, "Nomad");
-        farm.addAnimal("Rik");
-        farm.addAnimal("Morty");
-        farm.addAnimal(Animal.HORSE, "Гектор");
-        farm.addAnimal(Animal.HORSE, "Soul");
-        farm.addAnimal("Ahel");
+        // валидные записи
+        correctAnimals.add("CAT Барсик");
+        correctAnimals.add("CAT Мурзик");
+        correctAnimals.add("CAT Пушок");
 
-        System.out.println(farm.countedAnimals());
-        System.out.println(farm.uniqueNames());
+        correctAnimals.add("DOG Виски");
+        correctAnimals.add("DOG Виски");
+        correctAnimals.add("DOG Виски");
+        correctAnimals.add("DOG Виски");
+
+        correctAnimals.add("COW Гаврюша");
+        correctAnimals.add("COW Буренка");
+
+        correctAnimals.add("HORSE Молния");
+        correctAnimals.add("HORSE Слевин");
+        correctAnimals.add("HORSE Мустанг");
+
+        correctAnimals.add("NOT_DEFINED Anon");
+
+        AnimalFarm correctFarm = new AnimalFarm(correctAnimals);
+        System.out.println(correctFarm.countedAnimals() + "\n");
+        System.out.println(correctFarm.uniqueNames() + "\n");
+
+        List<String> incorrectAnimals = Arrays.asList("CAT ", "CAT", "CAT Пушок",
+                "DOG Виски", "DOG Виски", "DOG Виски", "DOG Виски",
+                "Гаврюша", " Буренка", " ",
+                "HORSEE Молния", "HORSEE", " Мустанг");
+
+        AnimalFarm incorrectFarm = new AnimalFarm(incorrectAnimals);
+        System.out.println(incorrectFarm.countedAnimals() + "\n");
+        System.out.println(incorrectFarm.uniqueNames() + "\n");
     }
 }
